@@ -1,0 +1,7 @@
+gym==0.15.4
+matplotlib
+pybullet
+stable-baselines3
+h5py
+roboschool
+importlib-metadata==4.13.0
