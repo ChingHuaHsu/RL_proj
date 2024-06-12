@@ -5,6 +5,8 @@ import time
 from collections import deque
 
 import gym
+import gymnasium as gym
+from gym import spaces
 import numpy as np
 import torch
 import torch.nn as nn

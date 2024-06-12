@@ -1,6 +1,7 @@
 import os
 
 import gym
+from gym import spaces
 import numpy as np
 import torch
 from gym.spaces.box import Box
@@ -109,12 +110,17 @@ def make_vec_envs(env_name,
     else:
         envs = DummyVecEnv(envs)
 
-    if len(envs.observation_space.shape) == 1:
-        if gamma is None:
-            envs = VecNormalize(envs, norm_reward=False)
-        else:
-            envs = VecNormalize(envs, gamma=gamma)
 
+    observation_space = envs.observation_space
+    print(f"Before VecNormalize: Observation space: {observation_space}, type: {type(observation_space)}")
+
+    if isinstance(observation_space, gym.spaces.Box):
+        if len(observation_space.shape) == 1:
+            if gamma is None:
+                envs = VecNormalize(envs, norm_reward=False)
+            else:
+                envs = VecNormalize(envs, gamma=gamma)
+    print(f"After VecNormalize: Observation space: {envs.observation_space}, type: {type(envs.observation_space)}")
     envs = VecPyTorch(envs, device)
 
     if num_frame_stack is not None:

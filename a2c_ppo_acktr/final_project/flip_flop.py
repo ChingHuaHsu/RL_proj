@@ -1,5 +1,6 @@
 import gym
 from gym import spaces
+import gymnasium as gym
 import numpy as np
 import random
 import time
@@ -12,7 +13,7 @@ import matplotlib.pyplot as plt
 class Flip_Flop(gym.Env):
     def __init__(self):
         # 定義晶片資訊
-        self.input_path = "/home/mchiou/miniconda3/a_proj/pytorch-a2c-ppo-acktr-gail/a2c_ppo_acktr/final_project/new_c1.txt"
+        self.input_path = "./a2c_ppo_acktr/final_project/new_c1.txt"
         self.mbffg = MBFFG(self.input_path)
         self.ori_score = self.mbffg.scoring()
         self.mb_info = self.mbffg.get_ffs()
@@ -64,7 +65,9 @@ class Flip_Flop(gym.Env):
     def step(self, action):
         combo=''
         reward=''
-        
+        info = {"episode": {}}
+
+
         if action < len(self.ff1_actions)*2 : # 是取 ff1 還是 ff2 
             act = action//len(self.ff1_actions)
             if act == 0: # 不合
@@ -174,10 +177,15 @@ class Flip_Flop(gym.Env):
         #done
         if len(self.taken_flip_flop) == self.ff1_count + self.ff2_count:
             self.done = True 
-        return self.observation, reward, self.done, {"episode": {"r": reward}}
-    
-    def reset(self):
-        if self.done == True :
+
+        print(f"Info before assignment: {info}")
+        info["episode"]["r"] = reward  # Make sure reward is defined before this line
+        print(f"Info after assignment: {info}")
+        
+        return self.observation, reward, self.done, info, None
+        
+    def reset(self, seed=None):
+        if self.done:
             plt.clf()
             plt.plot(self.record)
             plt.xlabel('Time')
@@ -192,8 +200,8 @@ class Flip_Flop(gym.Env):
         self.mb_info = self.mbffg.get_ffs()
         self.max_flip_flops = 100
         self.num_attributes = 6
-        self.ff1_chart = self.convert_to_dict(self.mb_info,filter_lib_name="ff1")
-        self.ff2_chart = self.convert_to_dict(self.mb_info,filter_lib_name="ff2")
+        self.ff1_chart = self.convert_to_dict(self.mb_info, filter_lib_name="ff1")
+        self.ff2_chart = self.convert_to_dict(self.mb_info, filter_lib_name="ff2")
         self.observation = self.state_to_observation()
         self.taken_flip_flop = []
         self.record = []
@@ -202,14 +210,16 @@ class Flip_Flop(gym.Env):
         self.done = False
         print("finish reset")
         time.sleep(3)
-        return self.observation
-        
+        return self.observation, {}  # 返回一个包含两个元素的元组
+            
     def render(self, mode='human'):
         pass
 
     def close(self):
         pass
     
+    def seed(self, seed=None):
+        pass
     def convert_to_dict(self, inst_list, filter_lib_name=None):
         filtered_list = [inst for inst in inst_list if filter_lib_name in inst.lib_name] if filter_lib_name else inst_list
         return [{'name': inst.name, 'index': idx, 'x': inst.x, 'y': inst.y, 'width': self.mb_lib[inst.lib_name].width, 'height': self.mb_lib[inst.lib_name].height} for idx, inst in enumerate(filtered_list)]
