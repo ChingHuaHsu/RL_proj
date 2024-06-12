@@ -14,7 +14,7 @@ miniconda3/envs/p37/lib/python3.7/site-packages/stable_baselines3/common/vec_env
 
 
 
-2. vec_transpose.py
+2. vec_normalize.py
 
   step_wait() 開頭與最後：
 

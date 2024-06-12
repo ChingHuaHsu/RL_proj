@@ -6,3 +6,10 @@ stable-baselines3
 h5py
 roboschool
 importlib-metadata==4.13.0
+gurobipy
+kaleido
+networkx
+plotly
+scipy
+shapely
+cached-property
