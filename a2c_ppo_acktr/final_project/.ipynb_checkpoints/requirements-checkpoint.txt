@@ -1,0 +1,6 @@
+gurobipy
+kaleido
+networkx
+plotly
+scipy
+shapely
